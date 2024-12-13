@@ -2,9 +2,16 @@ resource "google_container_cluster" "gke_learning" {
   name = "gke-learning"
 
   private_cluster_config {
-    enable_private_endpoint = false
+    enable_private_endpoint = true
     enable_private_nodes    = true
     master_ipv4_cidr_block  = var.master_ipv4_cidr_block
+  }
+
+  master_authorized_networks_config {
+    cidr_blocks {
+      cidr_block   = "0.0.0.0/0"
+      display_name = "my-machine"
+    }
   }
 
   network    = google_compute_network.vpc_network.self_link
@@ -23,7 +30,7 @@ resource "google_container_cluster" "gke_learning" {
 }
 
 resource "google_container_node_pool" "node_pool" {
-  name = "gke-learning-node-pool"
+  name           = "gke-learning-node-pool"
   cluster        = google_container_cluster.gke_learning.name
   node_count     = 1
   node_locations = data.google_compute_zones.central1_zones.names
@@ -35,6 +42,11 @@ resource "google_container_node_pool" "node_pool" {
     service_account = google_service_account.gke_sa.email
     oauth_scopes    = ["https://www.googleapis.com/auth/cloud-platform"]
 
+  }
+  autoscaling {
+    location_policy = "BALANCED"
+    min_node_count  = 1
+    max_node_count  = 3
   }
 
 }
