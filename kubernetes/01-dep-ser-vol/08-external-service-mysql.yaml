@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: cloud-sql-service
+spec:
+  type: ExternalName
+  externalName: 10.83.0.3 #35.222.237.149

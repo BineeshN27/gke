@@ -2,17 +2,17 @@ resource "google_container_cluster" "gke_learning" {
   name = "gke-learning"
 
   private_cluster_config {
-    enable_private_endpoint = true
+    enable_private_endpoint = false
     enable_private_nodes    = true
     master_ipv4_cidr_block  = var.master_ipv4_cidr_block
   }
 
-  master_authorized_networks_config {
-    cidr_blocks {
-      cidr_block   = "0.0.0.0/0"
-      display_name = "my-machine"
-    }
-  }
+  # master_authorized_networks_config {
+  #   cidr_blocks {
+  #     cidr_block   = "0.0.0.0/0"
+  #     display_name = "my-machine"
+  #   }
+  # }
 
   network    = google_compute_network.vpc_network.self_link
   subnetwork = google_compute_subnetwork.subnet_uscentral1.self_link
@@ -41,6 +41,11 @@ resource "google_container_node_pool" "node_pool" {
     preemptible     = true
     service_account = google_service_account.gke_sa.email
     oauth_scopes    = ["https://www.googleapis.com/auth/cloud-platform"]
+    kubelet_config {
+      cpu_cfs_quota      = false
+      pod_pids_limit     = 0
+      cpu_manager_policy = ""
+    }
 
   }
   autoscaling {
