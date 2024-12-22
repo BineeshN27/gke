@@ -22,6 +22,6 @@ output "gke_node_pool_version" {
   value = google_container_node_pool.node_pool.version
 }
 
-output "cloudsql_ip" {
-  value = google_sql_database_instance.cloudsql_mysql.ip_address.0.ip_address
-}
+# output "cloudsql_ip" {
+#   value = google_sql_database_instance.cloudsql_mysql.ip_address.0.ip_address
+# }
